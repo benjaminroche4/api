@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Author;
 use App\Repository\AuthorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,9 +21,23 @@ class AuthorController extends AbstractController
             $authorList,
             'json',
             [
-                'groups'=>['get:list']
+                'groups'=>['get:author:list']
             ]
         );
-        return new JsonResponse($result, 200, [], true);
+        return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
+
+    #[Route('/api/author/{id}', name: 'app_author_detail', methods:'GET')]
+    public function authorInfo(Author $author, SerializerInterface $serializer)
+    {
+        $result = $serializer->serialize(
+            $author,
+            'json',
+            [
+                'groups'=>['get:author:list', 'get:author:detail']
+            ]
+        );
+        return new JsonResponse($result, Response::HTTP_OK, [], true);
+    }
+
 }

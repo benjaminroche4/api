@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -13,9 +14,11 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['get:book:detail', 'get:category:list'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Groups(['get:book:detail', 'get:category:list'])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Book::class)]

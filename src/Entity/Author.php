@@ -14,18 +14,19 @@ class Author
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("get:list")]
+    #[Groups(["get:author:list", 'get:book:detail'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 50)]
-    #[Groups("get:list")]
+    #[Groups(["get:author:list", 'get:book:detail'])]
     private $name;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups("get:list")]
+    #[Groups(["get:author:list"])]
     private $createdAt;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Book::class)]
+    #[Groups(["get:author:detail"])]
     private $books;
 
     public function __construct()
