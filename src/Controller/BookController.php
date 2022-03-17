@@ -52,7 +52,7 @@ class BookController extends AbstractController
         $entityManager->persist($book);
         $entityManager->flush();
         return new JsonResponse($data, Response::HTTP_CREATED, [
-            "location" => "api/author/".$book->getId()
+            "location" => "api/book/".$book->getId()
         ], true);
     }
 

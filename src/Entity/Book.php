@@ -29,12 +29,12 @@ class Book
     #[Groups(["get:author:detail", 'get:book:detail'])]
     private $createdAt;
 
-    #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
+    #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['get:book:detail'])]
     private $author;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books', cascade: ['persist'])]
     #[Groups(['get:book:detail'])]
     private $category;
 
