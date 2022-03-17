@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -35,6 +37,12 @@ class Book
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books')]
     #[Groups(['get:book:detail'])]
     private $category;
+
+    public function __construct()
+    {
+        $this->author = new Author();
+    }
+
 
     public function getId(): ?int
     {
@@ -100,4 +108,5 @@ class Book
 
         return $this;
     }
+
 }

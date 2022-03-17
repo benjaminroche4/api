@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Repository\BookRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -37,5 +39,37 @@ class BookController extends AbstractController
             ]
         );
         return new JsonResponse($result, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/api/book', name: 'app_book_create', methods: 'POST')]
+    public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    {
+        $data = $request->getContent();
+
+        $book = $serializer->deserialize($data, Book::class, 'json');
+        $book->setCreatedAt(new \DateTimeImmutable());
+
+        $entityManager->persist($book);
+        $entityManager->flush();
+        return new JsonResponse($data, Response::HTTP_CREATED, [
+            "location" => "api/author/".$book->getId()
+        ], true);
+    }
+
+    #[Route('/api/book/{id}', name: 'app_book_update', methods:'PUT')]
+    public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    {
+        $data = $request->getContent();
+
+        $serializer->deserialize(
+            $data,
+            Book::class,
+            'json',
+            ['object_to_populate'=>$book]
+        );
+
+        $entityManager->persist($book);
+        $entityManager->flush();
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 }
