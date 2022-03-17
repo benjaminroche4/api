@@ -57,4 +57,12 @@ class CategoryController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    #[Route('/api/category/{id}', name: 'app_category_delete', methods:'DELETE')]
+    public function categoryDelete(Category $category, EntityManagerInterface $entityManager)
+    {
+        $entityManager->remove($category);
+        $entityManager->flush();
+        return new JsonResponse('Data deleted', Response::HTTP_OK, [], true);
+    }
+
 }

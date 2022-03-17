@@ -21,7 +21,7 @@ class Category
     #[Groups(['get:book:detail', 'get:category:list'])]
     private $name;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Book::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Book::class, cascade: 'delete')]
     private $books;
 
     public function __construct()
