@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthorController extends AbstractController
 {
@@ -43,12 +44,18 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author', name: 'app_author_create', methods:'POST')]
-    public function authorCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function authorCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
         $author = $serializer->deserialize($data, Author::class, 'json');
         $author->setCreatedAt(new \DateTimeImmutable());
+
+        $errors = $validator->validate($author);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($author);
         $entityManager->flush();
@@ -72,5 +79,13 @@ class AuthorController extends AbstractController
         $entityManager->persist($author);
         $entityManager->flush();
         return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/api/author/{id}', name: 'app_author_delete', methods:'DELETE')]
+    public function authorDelete(Author $author, EntityManagerInterface $entityManager)
+    {
+        $entityManager->remove($author);
+        $entityManager->flush();
+        return new JsonResponse('Data deleted', Response::HTTP_OK, [], true);
     }
 }

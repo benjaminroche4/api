@@ -72,4 +72,13 @@ class BookController extends AbstractController
         $entityManager->flush();
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
+
+    #[Route('/api/book/{id}', name: 'app_book_delete', methods:'DELETE')]
+    public function bookDelete(Book $book, EntityManagerInterface $entityManager)
+    {
+        $entityManager->remove($book);
+        $entityManager->flush();
+        return new JsonResponse('Data deleted', Response::HTTP_OK, [], true);
+    }
+
 }

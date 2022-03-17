@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -19,10 +21,20 @@ class Book
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Groups(["get:author:detail", "get:book:list"])]
+    #[Assert\Length(
+        min: 5,
+        max: 50,
+        minMessage: 'The name of the book must be at least {{ limit }} characters long',
+        maxMessage: 'The name of the book cannot be longer than {{ limit }} characters',
+    )]
     private $name;
 
     #[ORM\Column(type: 'text')]
     #[Groups(["get:author:detail", 'get:book:detail'])]
+    #[Assert\Length(
+        min: 5,
+        minMessage: 'The content must be at least {{ limit }} characters long',
+    )]
     private $content;
 
     #[ORM\Column(type: 'datetime_immutable')]

@@ -32,7 +32,9 @@ class CategoryController extends AbstractController
     public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
         $data = $request->getContent();
+
         $category = $serializer->deserialize($data, Category::class, 'json');
+
         $entityManager->persist($category);
         $entityManager->flush();
         return new JsonResponse($data, Response::HTTP_CREATED, [
