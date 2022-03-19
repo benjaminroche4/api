@@ -19,7 +19,7 @@ class Category
     private $id;
 
     #[ORM\Column(type: 'string', length: 50)]
-    #[Groups(['get:book:detail', 'get:category:list'])]
+    #[Groups(['get:book:detail', 'get:category:list', 'post:category'])]
     #[Assert\Length(
         min: 3,
         max: 50,

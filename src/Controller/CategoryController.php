@@ -12,9 +12,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class CategoryController extends AbstractController
 {
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of all categorys",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Category::class, groups={"get:category:list"}))
+     *     )
+     * )
+     * @OA\Tag(name="Category")
+     */
     #[Route('/api/category', name: 'app_category_list', methods: 'GET')]
     public function categoryList(CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
     {
@@ -30,6 +44,17 @@ class CategoryController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Add a categorys in database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Category::class, groups={"post:category"}))
+     *     )
+     * )
+     * @OA\Tag(name="Category")
+     */
     #[Route('/api/category', name: 'app_category_create', methods: 'POST')]
     public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -50,6 +75,17 @@ class CategoryController extends AbstractController
         ], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Add a categorys in database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Category::class, groups={"post:category"}))
+     *     )
+     * )
+     * @OA\Tag(name="Category")
+     */
     #[Route('/api/category/{id}', name: 'app_category_update', methods:'PUT')]
     public function categoryUpdate(Category $category, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -73,6 +109,17 @@ class CategoryController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Add a categorys in database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Category::class))
+     *     )
+     * )
+     * @OA\Tag(name="Category")
+     */
     #[Route('/api/category/{id}', name: 'app_category_delete', methods:'DELETE')]
     public function categoryDelete(Category $category, EntityManagerInterface $entityManager)
     {

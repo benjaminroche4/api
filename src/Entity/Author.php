@@ -19,7 +19,7 @@ class Author
     private $id;
 
     #[ORM\Column(type: 'string', length: 50)]
-    #[Groups(["get:author:list", 'get:book:detail'])]
+    #[Groups(["get:author:list", 'get:book:detail', 'post:author'])]
     #[Assert\Length(
         min: 5,
         max: 50,

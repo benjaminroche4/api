@@ -20,7 +20,7 @@ class Book
     private $id;
 
     #[ORM\Column(type: 'string', length: 50)]
-    #[Groups(["get:author:detail", "get:book:list"])]
+    #[Groups(["get:author:detail", "get:book:list", "post:book"])]
     #[Assert\Length(
         min: 5,
         max: 50,
@@ -30,7 +30,7 @@ class Book
     private $name;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(["get:author:detail", 'get:book:detail'])]
+    #[Groups(["get:author:detail", 'get:book:detail', "post:book"])]
     #[Assert\Length(
         min: 5,
         minMessage: 'The content must be at least {{ limit }} characters long',
@@ -43,11 +43,11 @@ class Book
 
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['get:book:detail'])]
+    #[Groups(['get:book:detail', "post:book"])]
     private $author;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'books', cascade: ['persist'])]
-    #[Groups(['get:book:detail'])]
+    #[Groups(['get:book:detail', "post:book"])]
     private $category;
 
     public function __construct()

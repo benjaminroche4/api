@@ -12,9 +12,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class BookController extends AbstractController
 {
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of all books",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Book::class, groups={"get:book:list"}))
+     *     )
+     * )
+     * @OA\Tag(name="Book")
+     */
     #[Route('/api/book', name: 'app_book_list', methods: 'GET')]
     public function bookList(BookRepository $bookRepository, SerializerInterface $serializer): Response
     {
@@ -30,6 +44,17 @@ class BookController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the detail of book",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Book::class, groups={"get:book:list", "get:book:detail"}))
+     *     )
+     * )
+     * @OA\Tag(name="Book")
+     */
     #[Route('/api/book/{id}', name: 'app_book_detail', methods: 'GET')]
     public function bookDetail(?Book $book, SerializerInterface $serializer)
     {
@@ -50,6 +75,17 @@ class BookController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Add book in the database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Book::class, groups={"post:book"}))
+     *     )
+     * )
+     * @OA\Tag(name="Book")
+     */
     #[Route('/api/book', name: 'app_book_create', methods: 'POST')]
     public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -71,6 +107,17 @@ class BookController extends AbstractController
         ], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Update book in the database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Book::class, groups={"post:book"}))
+     *     )
+     * )
+     * @OA\Tag(name="Book")
+     */
     #[Route('/api/book/{id}', name: 'app_book_update', methods:'PUT')]
     public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -94,6 +141,17 @@ class BookController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Deleted book in the detabase",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Book::class))
+     *     )
+     * )
+     * @OA\Tag(name="Book")
+     */
     #[Route('/api/book/{id}', name: 'app_book_delete', methods:'DELETE')]
     public function bookDelete(Book $book, EntityManagerInterface $entityManager)
     {

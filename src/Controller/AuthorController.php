@@ -14,7 +14,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
@@ -24,17 +23,11 @@ class AuthorController extends AbstractController
     /**
      * @OA\Response(
      *     response=200,
-     *     description="Returns the rewards of an user",
+     *     description="Returns the list of all authors",
      *     @OA\JsonContent(
      *        type="array",
-     *        @OA\Items(ref=@Model(type=Author::class, groups={"full"}))
+     *        @OA\Items(ref=@Model(type=Author::class, groups={"get:author:list"}))
      *     )
-     * )
-     * @OA\Parameter(
-     *     name="order",
-     *     in="query",
-     *     description="The field used to order rewards",
-     *     @OA\Schema(type="string")
      * )
      * @OA\Tag(name="Author")
      */
@@ -53,6 +46,17 @@ class AuthorController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the detail of author",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Author::class, groups={"get:author:detail", "get:author:list"}))
+     *     )
+     * )
+     * @OA\Tag(name="Author")
+     */
     #[Route('/api/author/{id}', name: 'app_author_detail', methods:'GET')]
     public function authorInfo(?Author $author, SerializerInterface $serializer)
     {
@@ -73,6 +77,17 @@ class AuthorController extends AbstractController
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Add a author in the database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Author::class, groups={"post:author"}))
+     *     )
+     * )
+     * @OA\Tag(name="Author")
+     */
     #[Route('/api/author', name: 'app_author_create', methods:'POST')]
     public function authorCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -94,6 +109,17 @@ class AuthorController extends AbstractController
         ], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Update a author in the database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Author::class, groups={"post:author"}))
+     *     )
+     * )
+     * @OA\Tag(name="Author")
+     */
     #[Route('/api/author/{id}', name: 'app_author_update', methods:'PUT')]
     public function authorUpdate(Author $author, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -117,6 +143,17 @@ class AuthorController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Deleted a author in the database",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Author::class))
+     *     )
+     * )
+     * @OA\Tag(name="Author")
+     */
     #[Route('/api/author/{id}', name: 'app_author_delete', methods:'DELETE')]
     public function authorDelete(Author $author, EntityManagerInterface $entityManager)
     {
