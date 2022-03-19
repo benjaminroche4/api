@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CategoryController extends AbstractController
 {
@@ -18,6 +19,7 @@ class CategoryController extends AbstractController
     public function categoryList(CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
     {
         $categoryList = $categoryRepository->findAll();
+
         $result = $serializer->serialize(
             $categoryList,
             'json',
@@ -29,11 +31,17 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/category', name: 'app_category_create', methods: 'POST')]
-    public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
         $category = $serializer->deserialize($data, Category::class, 'json');
+
+        $errors = $validator->validate($category);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($category);
         $entityManager->flush();
@@ -43,7 +51,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/category/{id}', name: 'app_category_update', methods:'PUT')]
-    public function categoryUpdate(Category $category, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function categoryUpdate(Category $category, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -53,6 +61,12 @@ class CategoryController extends AbstractController
             'json',
             ['object_to_populate'=>$category]
         );
+
+        $errors = $validator->validate($category);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($category);
         $entityManager->flush();

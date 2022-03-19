@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookController extends AbstractController
 {
@@ -18,6 +19,7 @@ class BookController extends AbstractController
     public function bookList(BookRepository $bookRepository, SerializerInterface $serializer): Response
     {
         $bookList = $bookRepository->findAll();
+
         $result = $serializer->serialize(
             $bookList,
             'json',
@@ -42,12 +44,18 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book', name: 'app_book_create', methods: 'POST')]
-    public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
         $book = $serializer->deserialize($data, Book::class, 'json');
         $book->setCreatedAt(new \DateTimeImmutable());
+
+        $errors = $validator->validate($book);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($book);
         $entityManager->flush();
@@ -57,7 +65,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name: 'app_book_update', methods:'PUT')]
-    public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -67,6 +75,12 @@ class BookController extends AbstractController
             'json',
             ['object_to_populate'=>$book]
         );
+
+        $errors = $validator->validate($book);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($book);
         $entityManager->flush();

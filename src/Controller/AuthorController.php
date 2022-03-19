@@ -20,6 +20,7 @@ class AuthorController extends AbstractController
     public function authorList(AuthorRepository $authorRepository, SerializerInterface $serializer): Response
     {
         $authorList = $authorRepository->findAll();
+
         $result = $serializer->serialize(
             $authorList,
             'json',
@@ -65,7 +66,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author/{id}', name: 'app_author_update', methods:'PUT')]
-    public function authorUpdate(Author $author, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function authorUpdate(Author $author, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -75,6 +76,12 @@ class AuthorController extends AbstractController
             'json',
             ['object_to_populate'=>$author]
         );
+
+        $errors = $validator->validate($author);
+        if(count($errors)){
+            $errorsJson = $serializer->serialize($errors, 'json');
+            return new JsonResponse($errorsJson, Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($author);
         $entityManager->flush();
