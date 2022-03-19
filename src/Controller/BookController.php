@@ -31,8 +31,15 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name: 'app_book_detail', methods: 'GET')]
-    public function bookDetail(Book $book, SerializerInterface $serializer)
+    public function bookDetail(?Book $book, SerializerInterface $serializer)
     {
+        if($book === null)
+        {
+            return $this->json([
+                'status' => 404,
+                'message' => 'Product not found'
+            ], 404);
+        }
         $result = $serializer->serialize(
             $book,
             'json',

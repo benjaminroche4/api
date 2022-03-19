@@ -32,8 +32,15 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author/{id}', name: 'app_author_detail', methods:'GET')]
-    public function authorInfo(Author $author, SerializerInterface $serializer)
+    public function authorInfo(?Author $author, SerializerInterface $serializer)
     {
+        if($author === null)
+        {
+            return $this->json([
+                'status' => 404,
+                'message' => 'Author not found'
+            ], 404);
+        }
         $result = $serializer->serialize(
             $author,
             'json',
