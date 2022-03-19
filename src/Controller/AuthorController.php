@@ -89,7 +89,8 @@ class AuthorController extends AbstractController
      * @OA\Tag(name="Author")
      */
     #[Route('/api/author', name: 'app_author_create', methods:'POST')]
-    public function authorCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function authorCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer,
+                                 ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -121,7 +122,8 @@ class AuthorController extends AbstractController
      * @OA\Tag(name="Author")
      */
     #[Route('/api/author/{id}', name: 'app_author_update', methods:'PUT')]
-    public function authorUpdate(Author $author, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function authorUpdate(Author $author, Request $request, EntityManagerInterface $entityManager,
+                                 SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 

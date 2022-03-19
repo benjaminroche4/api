@@ -87,7 +87,8 @@ class BookController extends AbstractController
      * @OA\Tag(name="Book")
      */
     #[Route('/api/book', name: 'app_book_create', methods: 'POST')]
-    public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function bookCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer,
+                               ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -119,7 +120,8 @@ class BookController extends AbstractController
      * @OA\Tag(name="Book")
      */
     #[Route('/api/book/{id}', name: 'app_book_update', methods:'PUT')]
-    public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function bookUpdate(Book $book, Request $request, EntityManagerInterface $entityManager,
+                               SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 

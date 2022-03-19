@@ -56,7 +56,8 @@ class CategoryController extends AbstractController
      * @OA\Tag(name="Category")
      */
     #[Route('/api/category', name: 'app_category_create', methods: 'POST')]
-    public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function categoryCreate(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer,
+                                   ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
@@ -87,7 +88,8 @@ class CategoryController extends AbstractController
      * @OA\Tag(name="Category")
      */
     #[Route('/api/category/{id}', name: 'app_category_update', methods:'PUT')]
-    public function categoryUpdate(Category $category, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function categoryUpdate(Category $category, Request $request, EntityManagerInterface $entityManager,
+                                   SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $data = $request->getContent();
 
