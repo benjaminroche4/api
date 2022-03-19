@@ -13,11 +13,33 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class AuthorController extends AbstractController
 {
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the rewards of an user",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Author::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="order",
+     *     in="query",
+     *     description="The field used to order rewards",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Author")
+     */
     #[Route('/api/author', name: 'app_author_list', methods:'GET')]
-    public function authorList(AuthorRepository $authorRepository, SerializerInterface $serializer): Response
+    public function authorList(AuthorRepository $authorRepository, SerializerInterface $serializer, CacheInterface $cache): Response
     {
         $authorList = $authorRepository->findAll();
 
