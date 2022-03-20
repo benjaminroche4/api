@@ -16,6 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class CategoryController extends AbstractController
 {
@@ -31,9 +32,14 @@ class CategoryController extends AbstractController
      * @OA\Tag(name="Category")
      */
     #[Route('/api/category', name: 'app_category_list', methods: 'GET')]
-    public function categoryList(CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
+    public function categoryList(CategoryRepository $categoryRepository, SerializerInterface $serializer,
+                                 CacheInterface $cache): Response
     {
-        $categoryList = $categoryRepository->findAll();
+        $categoryList = $cache->get('categoryList', function (ItemInterface $item) use ($categoryRepository)
+        {
+            $item->expiresAfter(3600);
+            return $categoryRepository->findAll();
+        });
 
         $result = $serializer->serialize(
             $categoryList,

@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class BookController extends AbstractController
 {
@@ -30,9 +32,13 @@ class BookController extends AbstractController
      * @OA\Tag(name="Book")
      */
     #[Route('/api/book', name: 'app_book_list', methods: 'GET')]
-    public function bookList(BookRepository $bookRepository, SerializerInterface $serializer): Response
+    public function bookList(BookRepository $bookRepository, SerializerInterface $serializer, CacheInterface $cache): Response
     {
-        $bookList = $bookRepository->findAll();
+        $bookList = $cache->get('bookList', function (ItemInterface $item) use ($bookRepository)
+        {
+            $item->expiresAfter(3600);
+            return $bookRepository->findAll();
+        });
 
         $result = $serializer->serialize(
             $bookList,

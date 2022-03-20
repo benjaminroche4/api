@@ -17,6 +17,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class AuthorController extends AbstractController
 {
@@ -34,7 +35,12 @@ class AuthorController extends AbstractController
     #[Route('/api/author', name: 'app_author_list', methods:'GET')]
     public function authorList(AuthorRepository $authorRepository, SerializerInterface $serializer, CacheInterface $cache): Response
     {
-        $authorList = $authorRepository->findAll();
+
+        $authorList = $cache->get('authorList', function (ItemInterface $item) use ($authorRepository)
+        {
+            $item->expiresAfter(3600);
+            return $authorRepository->findAll();
+        });
 
         $result = $serializer->serialize(
             $authorList,
